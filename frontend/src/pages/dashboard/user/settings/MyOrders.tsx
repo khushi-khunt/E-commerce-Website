@@ -68,7 +68,6 @@ const MyOrders = ({ orderId }: { orderId: string }) => {
     }
   }, [orders]);
 
-
   // reorder
   const handleReorder = (orderId: string) => {
     reorder.mutate(orderId, {
@@ -81,7 +80,6 @@ const MyOrders = ({ orderId }: { orderId: string }) => {
       },
     });
   };
-
 
   // get invoice
   const handleDownloadInvoice = async (orderId: string) => {
@@ -112,11 +110,13 @@ const MyOrders = ({ orderId }: { orderId: string }) => {
   if (!orders?.length) {
     return (
       <div className="max-w-6xl mx-auto px-4 py-8">
-        <Card className="p-12 text-center">
+        <Card className="p-2 text-center">
           <ShoppingBag className="h-24 w-24 mx-auto text-muted-foreground" />
           <h2 className="text-3xl font-bold text-muted-foreground">No Orders Yet</h2>
           <p className="text-lg text-muted-foreground">Once you place an order, it will appear here.</p>
-          <Button size="lg" className="mt-4 ">Start Shopping</Button>
+          <div>
+            <Button>Start Shopping</Button>
+          </div>
         </Card>
       </div>
     );

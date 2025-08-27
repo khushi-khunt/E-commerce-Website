@@ -1,21 +1,10 @@
-import { /*useEffect,*/ useState } from "react";
+import { useState } from "react";
 import AdminSidebar from "@/pages/dashboard/admin/AdminSidebar";
 import Header from "@/pages/dashboard/admin/Header";
-import { Outlet,/* useNavigate*/ } from "react-router-dom";
-// import useAuth from "@/hooks/use-auth";
+import { Outlet } from "react-router-dom";
 
 const AdminLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
-  // const navigate = useNavigate()
-  // const { token } = useAuth()
-
-  // useEffect(() => {
-  //   if (!token) {
-  //     navigate("/");
-  //   }
-  // }, [token,navigate])
-
-
   return (
     <div className="flex h-screen overflow-hidden">
       <aside

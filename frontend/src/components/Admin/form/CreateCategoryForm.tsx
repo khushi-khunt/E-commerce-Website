@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Formik, Form, Field } from "formik";
 import { useAddCategory } from "@/hooks/Mutation";
 import { Button } from "@/theme/components/ui/button";
@@ -23,7 +23,8 @@ const initialValues: CategoryFormValues = {
 };
 
 const CreateCategoryForm: React.FC = () => {
-  const { mutate } = useAddCategory();
+  const { mutate ,isLoading} = useAddCategory();
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleSubmit = (values: CategoryFormValues, { resetForm }: { resetForm: () => void }) => {
     if (!values.name || !values.icon) {
@@ -42,6 +43,9 @@ const CreateCategoryForm: React.FC = () => {
       onSuccess: () => {
         toast.success("Category created successfully!");
         resetForm();
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
       },
       onError: (error) => {
         toast.error("Failed to create category. Please try again.");
@@ -59,12 +63,12 @@ const CreateCategoryForm: React.FC = () => {
           <Form className="space-y-6">
             {/* Name */}
             <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-              <Label htmlFor="name" className="sm:w-40 text-sm font-semibold">Category Name</Label>
+              <Label htmlFor="name" className="sm:w-40 text-sm font-semibold">Category Titile</Label>
               <Field
                 as={Input}
                 id="name"
                 name="name"
-                placeholder="Enter category name"
+                placeholder="Enter category Title"
                 className="flex-1"
               />
             </div>
@@ -72,18 +76,31 @@ const CreateCategoryForm: React.FC = () => {
             {/* Icon */}
             <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
               <Label htmlFor="icon" className="sm:w-40 text-sm font-semibold">Icon</Label>
-              <Input
-                id="icon"
-                type="file"
-                accept="image/*"
-                onChange={(e) => {
-                  if (e.currentTarget.files) {
-                    setFieldValue("icon", e.currentTarget.files[0]);
-                  }
-                }}
-                className="flex-1"
-              />
+              <div className="flex-1 flex items-center gap-4">
+                <Input
+                ref={fileInputRef}
+                  id="icon"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    if (e.currentTarget.files) {
+                      setFieldValue("icon", e.currentTarget.files[0]);
+                    }
+                  }}
+                  className="flex-1"
+                />
+
+                {/* Show preview if an image is selected */}
+                {values.icon && (
+                  <img
+                    src={URL.createObjectURL(values.icon)}
+                    alt="Preview"
+                    className="w-16 h-16 object-cover rounded-md border"
+                  />
+                )}
+              </div>
             </div>
+
 
             {/* Featured */}
             <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
@@ -113,11 +130,12 @@ const CreateCategoryForm: React.FC = () => {
 
             {/* Display Order */}
             <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-              <Label htmlFor="displayOrder" className="sm:w-40 text-sm font-semibold">Display Order</Label>
+              <Label htmlFor="displayOrder" className="sm:w-40 text-sm font-semibold">Stock</Label>
               <Input
                 id="displayOrder"
                 name="displayOrder"
                 type="number"
+                placeholder="Quantity"
                 value={values.displayOrder}
                 onChange={(e) => setFieldValue("displayOrder", Number(e.target.value))}
                 className="flex-1"
@@ -126,8 +144,8 @@ const CreateCategoryForm: React.FC = () => {
 
             {/* Submit */}
             <div className="flex justify-end">
-              <Button type="submit" className="px-6 py-2 rounded-full font-semibold">
-                Create
+              <Button type="submit" className="px-6 py-2 rounded-full font-semibold" disabled={isLoading}>
+                {isLoading ? "creating" : "Create"}
               </Button>
             </div>
           </Form>

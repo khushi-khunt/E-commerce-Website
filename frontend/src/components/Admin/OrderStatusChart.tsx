@@ -23,11 +23,10 @@ const OrderStatusChart = () => {
     },
     responsive: [
       {
-        breakpoint: 480,
+        breakpoint: 768,
         options: {
-          legend: {
-            position: "bottom"
-          }
+          chart: { width: "100%" },
+          legend: { position: "bottom" }
         }
       }
     ]
@@ -37,7 +36,7 @@ const OrderStatusChart = () => {
   if (error) return <p>Error loading chart.</p>;
 
   return (
-    <Card >
+    <Card>
       <CardHeader>
         <CardTitle>Order Status Distribution</CardTitle>
       </CardHeader>

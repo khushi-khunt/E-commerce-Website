@@ -2,10 +2,10 @@ import { DeleteCategory, fetchCategories } from "@/services/productService";
 import { Avatar, AvatarFallback, AvatarImage } from "@/theme/components/ui/avatar";
 import { Button } from "@/theme/components/ui/button";
 import { Card } from "@/theme/components/ui/card";
+import { PencilLine, Trash } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-
 interface Category {
   _id: string;
   name: string;
@@ -57,71 +57,73 @@ const CategoryList: React.FC = () => {
   };
 
   return (
-    <Card className="max-w-6xl mx-auto p-4 sm:p-6 border border-muted shadow-md">
-      <h1 className="text-xl sm:text-2xl font-bold mb-6 text-center text-primary">
+    <Card className="max-w-6xl mx-auto p-3 sm:p-6 border border-muted shadow-md">
+      <h1 className="text-lg sm:text-2xl font-bold mb-4 sm:mb-6 text-center text-primary">
         Categories Table View
       </h1>
 
+      {/* Responsive Table Wrapper */}
       <div className="w-full overflow-x-auto rounded-lg border border-muted">
-        <table className="min-w-[850px] w-full text-sm sm:text-base border-collapse">
-          <thead className="bg-muted text-muted-foreground font-semibold">
-            <tr>
-              <th className="py-3 px-4 text-left whitespace-nowrap">Icon</th>
-              <th className="py-3 px-4 text-left whitespace-nowrap">Name</th>
-              <th className="py-3 px-4 text-left whitespace-nowrap">Status</th>
-              <th className="py-3 px-4 text-left whitespace-nowrap">Featured</th>
-              <th className="py-3 px-4 text-left whitespace-nowrap">Order</th>
-              <th className="py-3 px-4 text-left whitespace-nowrap">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {categories.map((category) => (
-              <tr
-                key={category._id}
-                className="border-b border-muted transition hover:bg-muted/50"
-              >
-                <td className="py-3 px-4">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src={category.icon?.url} alt={category.name} />
-                    <AvatarFallback>
-                      {category.name.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                </td>
-                <td className="py-3 px-4 max-w-[150px] truncate">{category.name}</td>
-                <td className="py-3 px-4">
-                  <span className={category.isActive ? "text-green-600" : "text-red-600"}>
-                    {category.isActive ? "Active" : "Inactive"}
-                  </span>
-                </td>
-                <td className="py-3 px-4">
-                  <span className={category.isFeatured ? "text-green-600" : "text-red-600"}>
-                    {category.isFeatured ? "Featured" : "Not Featured"}
-                  </span>
-                </td>
-                <td className="py-3 px-4">{category.displayOrder}</td>
-                <td className="py-3 px-4">
-                  <div className="flex flex-wrap gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleEdit(category._id)}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={() => handleDelete(category._id)}
-                    >
-                      Delete
-                    </Button>
-                  </div>
-                </td>
+        <div className="hidden md:block overflow-x-auto rounded-lg border border-muted">
+          <table className="w-full text-sm border-collapse">
+            <thead className="bg-muted text-muted-foreground font-semibold">
+              <tr>
+                <th className="py-3 px-4 text-left">Icon</th>
+                <th className="py-3 px-4 text-left">Category</th>
+                <th className="py-3 px-4 text-left">Status</th>
+                <th className="py-3 px-4 text-left">Featured</th>
+                <th className="py-3 px-4 text-left">Stock</th>
+                <th className="py-3 px-4 text-left">Action</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {categories.map((category) => (
+                <tr key={category._id} className="border-b">
+                  <td className="py-3 px-4">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={category.icon?.url} alt={category.name} />
+                      <AvatarFallback>{category.name.charAt(0).toUpperCase()}</AvatarFallback>
+                    </Avatar>
+                  </td>
+                  <td className="py-3 px-4">{category.name}</td>
+                  <td className="py-3 px-4">{category.isActive ? "Active" : "Inactive"}</td>
+                  <td className="py-3 px-4">{category.isFeatured ? "Featured" : "Not Featured"}</td>
+                  <td className="py-3 px-4">{category.displayOrder}</td>
+                  <td className="py-3 px-4 flex gap-2">
+                    <Button size="sm" onClick={() => handleEdit(category._id)}><PencilLine /></Button>
+                    <Button size="sm" onClick={() => handleDelete(category._id)}><Trash /></Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Card layout for small screens */}
+        <div className="block md:hidden space-y-4">
+          {categories.map((category) => (
+            <Card key={category._id} className="p-4 border">
+              <div className="flex items-center gap-3 mb-2">
+                <Avatar className="h-10 w-10">
+                  <AvatarImage src={category.icon?.url} alt={category.name} />
+                  <AvatarFallback>{category.name.charAt(0).toUpperCase()}</AvatarFallback>
+                </Avatar>
+                <h2 className="font-semibold text-base">{category.name}</h2>
+              </div>
+              <p>Status: <span className={category.isActive ? "text-green-600" : "text-red-600"}>
+                {category.isActive ? "Active" : "Inactive"}
+              </span></p>
+              <p>Featured: <span className={category.isFeatured ? "text-green-600" : "text-red-600"}>
+                {category.isFeatured ? "Featured" : "Not Featured"}
+              </span></p>
+              <p>Stock: {category.displayOrder}</p>
+              <div className="mt-3 flex gap-2">
+                <Button size="sm" onClick={() => handleEdit(category._id)}><PencilLine /></Button>
+                <Button size="sm" onClick={() => handleDelete(category._id)}><Trash /></Button>
+              </div>
+            </Card>
+          ))}
+        </div>
       </div>
     </Card>
   );

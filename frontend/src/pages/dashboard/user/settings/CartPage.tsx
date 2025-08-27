@@ -210,11 +210,12 @@ const CartPage = () => {
                             Subtotal: ₹{subtotal}
                         </p>
                         <Button
-                            className="w-full mt-4 bg-emerald-600 text-white"
+                            className="w-full sm:w-auto mt-4 bg-emerald-600 text-white"
                             onClick={() => navigate("/user/location")}
                         >
                             Proceed to Checkout
                         </Button>
+
                     </CardContent>
                 </Card>
             </div>

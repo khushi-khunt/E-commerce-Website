@@ -21,14 +21,15 @@ export const TopProducts = () => {
   if (error) return <p>Failed to load Top Products</p>
 
   return (
-    <Card className="shadow-md">
+    <Card className="shadow-md h-full">
       <CardContent className="p-6">
         <h3 className="text-lg font-semibold mb-4 text-center border-b pb-2">
           Top Popular Products
         </h3>
 
-        <div className="overflow-x-auto">
-          <table className="min-w-full text-sm text-left border border-gray-200">
+        {/* ✅ Scroll wrapper */}
+        <div className="w-full overflow-x-auto">
+          <table className="min-w-[500px] text-sm text-left border border-gray-200">
             <thead className="bg-gray-100">
               <tr>
                 <th className="px-4 py-2 font-medium text-muted-foreground">#</th>

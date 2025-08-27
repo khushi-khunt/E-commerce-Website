@@ -19,8 +19,7 @@ export const BestSellers = () => {
           {bestSellers.map((seller: SellerType, index: number) => (
             <li
               key={seller.id}
-              className="flex items-center justify-between gap-4 p-3 rounded-md hover:bg-muted transition-all"
-            >
+              className="flex flex-wrap items-center justify-between gap-4 p-3 rounded-md hover:bg-muted transition-all">
               {/* Rank and Avatar */}
               <div className="flex items-center gap-4">
                 <div className="text-lg font-bold text-muted-foreground w-6 text-center">

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
 import { fetchProducts } from "@/services/productService";
-import { Grid, Paper, Typography, Box } from "@mui/material";
 import StockAvailabilityChart from "@/components/Admin/StockAvailabilityChart";
+import { Card, CardHeader, CardTitle, CardContent } from "@/theme/components/ui/card";
 
 const UsersReport = () => {
   const [chartData, setChartData] = useState<any[]>([]);
@@ -22,11 +22,13 @@ const UsersReport = () => {
           grouped[category].totalPrice += p.price;
         });
 
-        setChartData(Object.keys(grouped).map((cat) => ({
-          category: cat,
-          count: grouped[cat].count,
-          totalPrice: grouped[cat].totalPrice,
-        })));
+        setChartData(
+          Object.keys(grouped).map((cat) => ({
+            category: cat,
+            count: grouped[cat].count,
+            totalPrice: grouped[cat].totalPrice,
+          }))
+        );
       } catch (err) {
         console.error("Error loading product report", err);
       } finally {
@@ -37,7 +39,7 @@ const UsersReport = () => {
     loadProducts();
   }, []);
 
-  if (loading) return <p>Loading report...</p>;
+  if (loading) return <p className="text-center py-6">Loading report...</p>;
 
   const series = [
     { name: "Product Count", type: "column", data: chartData.map((d) => d.count) },
@@ -45,40 +47,70 @@ const UsersReport = () => {
   ];
 
   const options = {
-    chart: { type: "line", stacked: false },
+    chart: { type: "line", stacked: false, toolbar: { show: false } },
     stroke: { width: [0, 3], curve: "smooth" },
     colors: ["#3b82f6", "#ff6384"],
     plotOptions: { bar: { columnWidth: "40%", borderRadius: 4 } },
     markers: {
-      size: 5, colors: ["#ff6384"], strokeColors: "#fff", strokeWidth: 2, hover: { size: 7 },
+      size: 5,
+      colors: ["#ff6384"],
+      strokeColors: "#fff",
+      strokeWidth: 2,
+      hover: { size: 7 },
     },
     xaxis: { categories: chartData.map((d) => d.category) },
     yaxis: [
       { title: { text: "Product Count" } },
       { opposite: true, title: { text: "Total Price" } },
     ],
-    tooltip: { shared: true, intersect: false, y: { formatter: (val: number) => val.toLocaleString() } },
+    tooltip: {
+      shared: true,
+      intersect: false,
+      y: { formatter: (val: number) => val.toLocaleString() },
+    },
+    responsive: [
+      {
+        breakpoint: 768,
+        options: {
+          plotOptions: { bar: { columnWidth: "60%" } },
+          legend: { position: "bottom" },
+        },
+      },
+    ],
   };
 
   return (
-    <Grid container spacing={3}>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {/* First Chart */}
-      <Grid item xs={12} md={6}>
-        <Paper elevation={3} sx={{ p: 2, height: "100%" }}>
-          <Typography variant="h6" gutterBottom>
-            Products Report by Category
-          </Typography>
-          <ReactApexChart options={options} series={series} type="line" height={350} width={570} />
-        </Paper>
-      </Grid>
+      <Card className="w-full">
+        <CardHeader>
+          <CardTitle>Products Report by Category</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="w-full overflow-x-auto">
+            <ReactApexChart
+              options={options}
+              series={series}
+              type="line"
+              height={350}
+              width="100%"
+            />
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Second Chart */}
-      <Grid item xs={12} md={6}>
-        <Paper elevation={3} sx={{ p: 2, height: "100%" }}>
-          <StockAvailabilityChart />
-        </Paper>
-      </Grid>
-    </Grid>
+      <Card className="w-full">
+        <CardHeader>
+          <CardTitle>Stock Availability</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="w-full overflow-x-auto">
+            <StockAvailabilityChart />
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 

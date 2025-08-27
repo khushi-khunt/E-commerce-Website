@@ -9,7 +9,7 @@ import { useNavigate, useParams } from "react-router-dom";
 const EditCategory = () => {
   const { _id } = useParams();
   const [name, setName] = useState("");
-  const [icon, setIcon] = useState<File | null>(null)
+  const [icon, setIcon] = useState<File | string | null>(null)
   const [isFeatured, setIsFeatured] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const [displayOrder, setDisplayOrder] = useState(0);
@@ -22,7 +22,7 @@ const EditCategory = () => {
           const data = await fetchCategoryById(_id);
           if (data) {
             setName(data.name || "");
-            setIcon(data.icon || null);
+            setIcon(data.icon?.url || null);
             setDisplayOrder(data.displayOrder || 0);
             setIsActive(data.isActive || false);
             setIsFeatured(data.isFeatured || false);
@@ -48,7 +48,7 @@ const EditCategory = () => {
     try {
       const formData = new FormData();
       formData.append("name", name);
-      if (icon) formData.append("icon", icon);
+      if (icon instanceof File) formData.append("icon", icon);
       formData.append("displayOrder", String(displayOrder));
       formData.append("isActive", String(isActive));
       formData.append("isFeatured", String(isFeatured));
@@ -61,9 +61,6 @@ const EditCategory = () => {
       toast.error("Failed to update category.");
     }
   };
-
-  console.log({ icon })
-
 
   return (
     <div className="max-w-xl mx-auto p-6 border rounded-xl shadow-sm bg-white mt-4">
@@ -80,16 +77,37 @@ const EditCategory = () => {
           />
         </div>
         {/* //for icon */}
+        {/* Icon input + preview */}
         <div className="flex items-center gap-4">
           <Label htmlFor="icon" className="w-32 text-sm font-semibold">Icon</Label>
-          <Input
-            id="icon"
-            type="file"
-            accept="image/*"
-            onChange={handleIconChange}
-            required
-            className="flex-1"
-          />
+          <div className="flex-1 flex items-center gap-4">
+            <Input
+              id="icon"
+              type="file"
+              accept="image/*"
+              onChange={handleIconChange}
+              className="flex-1"
+            />
+
+            {/* Show existing image if icon is a string (from DB) */}
+            {typeof icon === "string" && (
+              <img
+                src={icon}
+                alt="Current Icon"
+                className="w-16 h-16 object-cover rounded-md border"
+              />
+            )}
+
+            {/* Show preview if a new file is chosen */}
+            {icon instanceof File && (
+              <img
+                src={URL.createObjectURL(icon)}
+                alt="Preview"
+                className="w-16 h-16 object-cover rounded-md border"
+              />
+            )}
+
+          </div>
         </div>
 
         {/* display order */}

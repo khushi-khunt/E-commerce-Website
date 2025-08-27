@@ -115,7 +115,7 @@ export const fetchCategoryById = async (_id: string) => {
     try {
         if (!_id) throw new Error("Invalid product id.")
         const res = await client.get(`/api/categories/getCategory/${_id}`);
-        console.log(res.data)
+        // console.log(res.data)
         return res.data
     } catch (error: any) {
         console.error("Error fetching categories by ID", error.response?.data || error.message);
@@ -257,7 +257,7 @@ export const changeUserPassword = async (data: { currentPassword: string, newPas
 //USER-VERIFY-OTP
 export const verifyEmailOtp = async (data: { email: string, otp: string }) => {
     const res = await client.post("/api/user/verify-email-otp?", data);
-    console.log("verifyemailotp is", res.data)
+    // console.log("verifyemailotp is", res.data)
     return res.data
 }
 //USER-FORGOT-PASSWORD
@@ -468,7 +468,7 @@ export const cancelOrderWithOtp = async ({ orderId, otp }: { orderId: string, ot
     try {
         if (!orderId) throw new Error("Invalid order is passed to cancel order")
         const res = await client.post(`/api/orders/${orderId}/cancel-with-otp`, { otp });
-        console.log(res.data)
+        // console.log(res.data)
         return res.data
     } catch (err) {
         console.log("Error to cancel order:", err.response?.data || err.message);

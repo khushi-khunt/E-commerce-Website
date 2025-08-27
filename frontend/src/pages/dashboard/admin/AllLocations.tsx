@@ -32,11 +32,10 @@ export default function AllLocations() {
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["all-locations"],
     queryFn: fetchAllLocations,
-    staleTime: 1000 * 60 * 2, // 2 minutes
+    staleTime: 1000 * 60 * 2,
     retry: 1,
   });
 
-  // normalize: API might return array or { locations }
   const locationsArray: Location[] = useMemo(() => {
     if (!data) return [];
     if (Array.isArray(data)) return data as Location[];
@@ -44,7 +43,6 @@ export default function AllLocations() {
     return [];
   }, [data]);
 
-  // filter by search query (user name, address, zip)
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return locationsArray;
@@ -75,7 +73,11 @@ export default function AllLocations() {
       time: new Date(loc.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     }));
 
-    const csv = [Object.keys(rows[0] || {}).join(","), ...rows.map((r) => Object.values(r).map((v) => `"${String(v).replace(/"/g, '""')}"`).join(","))].join("\n");
+    const csv = [
+      Object.keys(rows[0] || {}).join(","),
+      ...rows.map((r) => Object.values(r).map((v) => `"${String(v).replace(/"/g, '""')}"`).join(",")),
+    ].join("\n");
+
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -88,19 +90,28 @@ export default function AllLocations() {
   return (
     <div className="p-6">
       <Card className="w-full">
-        <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
+        {/* Header with search + actions */}
+        <CardHeader className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+          {/* Title + subtitle */}
+          <div className="flex flex-col">
             <CardTitle>All Saved Locations</CardTitle>
-            <p className="text-sm text-muted-foreground">Recent user delivery locations — sorted newest first</p>
+            <p className="text-sm text-muted-foreground">
+              Recent user delivery locations — sorted newest first
+            </p>
           </div>
 
-          <div className="flex items-center gap-2">
-            <div className="relative">
+          {/* Actions */}
+          <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2 w-full lg:w-auto">
+            {/* Search */}
+            <div className="relative flex-1 min-w-[200px]">
               <Input
                 placeholder="Search by user, address or zip"
                 value={query}
-                onChange={(e) => { setQuery(e.target.value); setPage(1); }}
-                className="pl-10 pr-10 w-72"
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  setPage(1);
+                }}
+                className="pl-10 pr-10 w-full"
               />
               <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
                 <Search size={16} />
@@ -116,18 +127,21 @@ export default function AllLocations() {
               )}
             </div>
 
+            {/* Export */}
             <Tooltip>
               <span slot="content">Export visible page to CSV</span>
-              <Button variant="outline" onClick={exportCSV}>
+              <Button variant="outline" className="w-full sm:w-auto" onClick={exportCSV}>
                 <Download className="mr-2" size={16} /> Export
               </Button>
             </Tooltip>
 
-            <Button variant="ghost" onClick={() => refetch()}>
+            {/* Refresh */}
+            <Button variant="ghost" className="w-full sm:w-auto" onClick={() => refetch()}>
               Refresh
             </Button>
           </div>
         </CardHeader>
+
 
         <CardContent>
           {isLoading ? (
@@ -150,46 +164,104 @@ export default function AllLocations() {
               <p className="text-sm">Try changing search or refresh the list.</p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableCaption>Showing {paginated.length} of {total} locations</TableCaption>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-56">User</TableHead>
-                    <TableHead>Address</TableHead>
-                    <TableHead>Zip Code</TableHead>
-                    <TableHead>Confirm Location</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Time</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {paginated.map((loc) => {
-                    const dateObj = new Date(loc.createdAt);
-                    const date = dateObj.toLocaleDateString();
-                    const time = dateObj.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-                    const userName = typeof loc.userId === "object" ? loc.userId?.name : "Unknown";
+            <>
+              {/* TABLE (xl and up) */}
+              <div className="hidden xl:block overflow-x-auto">
+                <Table>
+                  <TableCaption>
+                    Showing {paginated.length} of {total} locations
+                  </TableCaption>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-56">User</TableHead>
+                      <TableHead>Address</TableHead>
+                      <TableHead>Zip Code</TableHead>
+                      <TableHead>Confirm Location</TableHead>
+                      <TableHead>Date</TableHead>
+                      <TableHead>Time</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {paginated.map((loc) => {
+                      const dateObj = new Date(loc.createdAt);
+                      const date = dateObj.toLocaleDateString();
+                      const time = dateObj.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+                      const userName = typeof loc.userId === "object" ? loc.userId?.name : "Unknown";
+                      return (
+                        <TableRow key={loc._id}>
+                          <TableCell>
+                            <div className="flex flex-col">
+                              <span className="font-medium">{userName}</span>
+                              <span className="text-xs text-muted-foreground">
+                                {typeof loc.userId === "object" ? loc.userId?.email : ""}
+                              </span>
+                            </div>
+                          </TableCell>
+                          <TableCell className="max-w-xs break-words">{loc.address}</TableCell>
+                          <TableCell>{loc.zipCode}</TableCell>
+                          <TableCell className="max-w-xs break-words">{loc.confirmLocation}</TableCell>
+                          <TableCell>
+                            <Badge variant="outline">{date}</Badge>
+                          </TableCell>
+                          <TableCell>{time}</TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
 
-                    return (
-                      <TableRow key={loc._id}>
-                        <TableCell>
-                          <div className="flex flex-col">
-                            <span className="font-medium">{userName}</span>
-                            <span className="text-xs text-muted-foreground">{typeof loc.userId === "object" ? loc.userId?.email : ""}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell className="max-w-xs break-words">{loc.address}</TableCell>
-                        <TableCell>{loc.zipCode}</TableCell>
-                        <TableCell className="max-w-xs break-words">{loc.confirmLocation}</TableCell>
-                        <TableCell><Badge variant="outline">{date}</Badge></TableCell>
-                        <TableCell>{time}</TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
+              {/* CARDS (below xl) */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 xl:hidden">
+                {paginated.map((loc) => {
+                  const dateObj = new Date(loc.createdAt);
+                  const date = dateObj.toLocaleDateString();
+                  const time = dateObj.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+                  const userName = typeof loc.userId === "object" ? loc.userId?.name : "Unknown";
+                  return (
+                    <Card key={loc._id} className="p-4">
+                      <div className="mb-2">
+                        <p className="font-medium">{userName}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {typeof loc.userId === "object" ? loc.userId?.email : ""}
+                        </p>
+                      </div>
+                      <p className="text-sm"><span className="font-semibold">Address:</span> {loc.address}</p>
+                      <p className="text-sm"><span className="font-semibold">Zip:</span> {loc.zipCode}</p>
+                      <p className="text-sm"><span className="font-semibold">Confirm:</span> {loc.confirmLocation}</p>
+                      <p className="text-sm"><span className="font-semibold">Date:</span> {date}</p>
+                      <p className="text-sm"><span className="font-semibold">Time:</span> {time}</p>
+                    </Card>
+                  );
+                })}
+              </div>
 
-              {/* Pagination controls */}
+              {/* CARDS (sm & md) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:hidden">
+                {paginated.map((loc) => {
+                  const dateObj = new Date(loc.createdAt);
+                  const date = dateObj.toLocaleDateString();
+                  const time = dateObj.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+                  const userName = typeof loc.userId === "object" ? loc.userId?.name : "Unknown";
+                  return (
+                    <Card key={loc._id} className="p-4">
+                      <div className="mb-2">
+                        <p className="font-medium">{userName}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {typeof loc.userId === "object" ? loc.userId?.email : ""}
+                        </p>
+                      </div>
+                      <p className="text-sm"><span className="font-semibold">Address:</span> {loc.address}</p>
+                      <p className="text-sm"><span className="font-semibold">Zip:</span> {loc.zipCode}</p>
+                      <p className="text-sm"><span className="font-semibold">Confirm:</span> {loc.confirmLocation}</p>
+                      <p className="text-sm"><span className="font-semibold">Date:</span> {date}</p>
+                      <p className="text-sm"><span className="font-semibold">Time:</span> {time}</p>
+                    </Card>
+                  );
+                })}
+              </div>
+
+              {/* Pagination */}
               <div className="flex items-center justify-between mt-4">
                 <p className="text-sm text-muted-foreground">Page {page} of {pageCount}</p>
                 <div className="flex items-center gap-2">
@@ -197,7 +269,7 @@ export default function AllLocations() {
                   <Button disabled={page === pageCount} onClick={() => setPage((p) => Math.min(pageCount, p + 1))}>Next</Button>
                 </div>
               </div>
-            </div>
+            </>
           )}
         </CardContent>
       </Card>

@@ -10,7 +10,9 @@ import {
   FilePlus,
   PieChart,
   MapPin,
+
   Tag,
+  Settings,
 } from "lucide-react";
 import {
   AiOutlineFacebook,
@@ -24,6 +26,8 @@ import { useState } from "react";
 import clsx from "clsx";
 import { Button } from "@/theme/components/ui/button";
 import useAuth from "@/hooks/use-auth";
+import { useDispatch } from "react-redux";
+import { resetState } from "@/store/slices/authSlice";
 
 type SidebarLink = {
   name: string;
@@ -85,6 +89,15 @@ const sidebarLinks: SidebarLink[] = [
     ],
   },
   { name: "Location", to: "/admin/location", icon: MapPin },
+  {
+    name: "Setting",
+    icon: Settings,
+    children: [
+      { name: "FAQS", to: "/admin/Faqs" },
+      { name: "Help Center", to: "/admin/help-center" },
+      { name: "Privacy Policy", to: "/admin/privacy-policy" },
+    ],
+  },
 ];
 
 const sidebarSections: SidebarSection[] = [
@@ -101,7 +114,7 @@ const sidebarSections: SidebarSection[] = [
   {
     title: "SETTING",
     links: sidebarLinks.filter((link) =>
-      ["Coupons", "Location"].includes(link.name)
+      ["Coupons", "Location", "Setting"].includes(link.name)
     ),
   },
   {
@@ -120,15 +133,15 @@ const sidebarIcons = [
 export default function AdminSidebar({ collapsed, setCollapsed }: Props) {
   const navigate = useNavigate();
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
-  const handleResetAuth = useAuth();
   const location = useLocation();
+  const dispatch = useDispatch();
 
   const toggleMenu = (name: string) => {
     setOpenMenus((prev) => ({ ...prev, [name]: !prev[name] }));
   };
 
   const handleLogout = () => {
-    handleResetAuth;
+    dispatch(resetState());
     navigate("/");
   };
 

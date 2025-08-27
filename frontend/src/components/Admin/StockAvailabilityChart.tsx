@@ -49,7 +49,7 @@ const StockAvailabilityChart = () => {
       <Typography variant="h6" gutterBottom>
         Stock Availability by Category
       </Typography>
-      <ReactApexChart options={stockOptions} series={stockSeries} type="bar" height={350} width={570} />
+      <ReactApexChart options={stockOptions} series={stockSeries} type="bar" height={350} width="100%" />
     </>
   );
 };

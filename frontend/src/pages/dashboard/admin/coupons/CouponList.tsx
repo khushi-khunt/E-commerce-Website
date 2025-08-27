@@ -1,22 +1,20 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/theme/components/ui/button";
-// import { Input } from "@/theme/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/theme/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/theme/components/ui/table";
+import { Switch } from "@/theme/components/ui/switch";
+import { Trash } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
-import { Switch } from "@/theme/components/ui/switch";
 import {
   DeleteCoupon,
   FetchCoupons,
-  // filterCoupons,
   toggleCouponStatus,
 } from "@/services/productService";
-import { Trash } from "lucide-react";
 
 export default function CouponList() {
   const queryClient = useQueryClient();
-  // const [search, setSearch] = useState("");
   const [filteredCoupons, setFilteredCoupons] = useState([]);
-  // const [isSearching, setIsSearching] = useState(false);
 
   // Fetch all coupons
   const { data: coupons = [], isLoading } = useQuery({
@@ -30,7 +28,7 @@ export default function CouponList() {
     onSuccess: () => {
       toast.success("Coupon deleted");
       queryClient.invalidateQueries(["coupons"]);
-      setFilteredCoupons([]); // clear filter view
+      setFilteredCoupons([]);
     },
     onError: (err) => {
       console.error("Delete error:", err);
@@ -51,104 +49,110 @@ export default function CouponList() {
     },
   });
 
-  // // Search (filter)
-  // const { mutate: searchCoupons } = useMutation({
-  //   mutationFn: filterCoupons,
-  //   onMutate: () => setIsSearching(true),
-  //   onSuccess: (data) => {
-  //     setFilteredCoupons(data); // set filtered list
-  //     setIsSearching(false);
-  //   },
-  //   onError: (err) => {
-  //     console.error("Search error:", err);
-  //     toast.error("Search failed");
-  //     setIsSearching(false);
-  //   },
-
-  // });
-
-  // const handleSearch = () => {
-  //   if (search.trim() !== "") {
-  //     searchCoupons(search.trim());
-  //   } else {
-  //     setFilteredCoupons([]); // clear search
-  //   }
-  // };
-
   const displayCoupons = filteredCoupons.length > 0 ? filteredCoupons : coupons;
 
   return (
-    <div className="max-w-5xl mx-auto p-6 space-y-4">
-      <h2 className="text-2xl font-semibold">Coupons</h2>
+    <div className="max-w-6xl mx-auto p-4 sm:p-6 space-y-6">
+      <Card className="shadow-md">
+        <CardHeader>
+          <CardTitle className="text-xl sm:text-2xl font-semibold">Coupons</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {isLoading ? (
+            <p className="text-sm text-muted-foreground">Loading coupons...</p>
+          ) : displayCoupons.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No coupons found.</p>
+          ) : (
+            <>
+              {/* --- Full table for lg+ screens --- */}
+              <div className="hidden lg:block w-full overflow-x-auto rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Category</TableHead>
+                      <TableHead>Product-Code</TableHead>
+                      <TableHead>Discount</TableHead>
+                      <TableHead>Min Order</TableHead>
+                      <TableHead>Max Usage</TableHead>
+                      <TableHead>Starts At</TableHead>
+                      <TableHead>Ends At</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {displayCoupons.map((coupon) => (
+                      <TableRow key={coupon._id}>
+                        <TableCell>{coupon?.productCategory}</TableCell>
+                        <TableCell>{coupon.code}</TableCell>
+                        <TableCell>
+                          {coupon.type === "percentage"
+                            ? `${coupon.discountPercent}%`
+                            : `₹${coupon.discountAmount}`}
+                        </TableCell>
+                        <TableCell>₹{coupon.minOrderValue}</TableCell>
+                        <TableCell>{coupon.maxUsage}</TableCell>
+                        <TableCell>{coupon?.startsAt}</TableCell>
+                        <TableCell>{coupon?.expiresAt}</TableCell>
+                        <TableCell>
+                          <Switch
+                            checked={coupon.active}
+                            onCheckedChange={() => toggleStatus(coupon._id)}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="hover:bg-red-50"
+                            onClick={() => deleteOne(coupon._id)}
+                          >
+                            <Trash className="h-4 w-4 text-red-500" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
 
-      {/* Search Input */}
-      {/* <div className="flex gap-4 mb-4">
-        <Input
-          placeholder="Search coupon code..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-80"
-        />
-        <Button onClick={handleSearch} disabled={isSearching}>
-          {isSearching ? "Searching..." : "Search"}
-        </Button>
-      </div> */}
-
-      {/* Display Table */}
-      {isLoading ? (
-        <p>Loading coupons...</p>
-      ) : displayCoupons.length === 0 ? (
-        <p>No coupons found.</p>
-      ) : (
-        <table className="w-full text-sm border">
-          <thead className="bg-muted text-left">
-            <tr>
-              <th className="p-2">Category</th>
-              <th className="p-2">Product-Code</th>
-              <th className="p-2">Discount</th>
-              <th className="p-2">Min Order</th>
-              <th className="p-2">Max Usage</th>
-              <th className="p-2">Starts At</th>
-              <th className="p-2">Ends at</th>
-              <th className="p-2">Status</th>
-              <th className="p-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {displayCoupons.map((coupon) => (
-              <tr key={coupon._id} className="border-t">
-                <td>{coupon?.productCategory}</td>
-                <td className="p-2">{coupon.code}</td>
-                <td className="p-2">
-                  {coupon.type === "percentage"
-                    ? `${coupon.discountPercent}%`
-                    : `₹${coupon.discountAmount}`}
-                </td>
-                <td className="p-2">₹{coupon.minOrderValue}</td>
-                <td className="p-2">{coupon.maxUsage}</td>
-
-                <td>{coupon?.startsAt}</td>
-                <td>{coupon?.expiresAt}</td>
-                <td className="p-2">
-                  <Switch
-                    checked={coupon.active}
-                    onCheckedChange={() => toggleStatus(coupon._id)}
-                  />
-                </td>
-                <td className="p-2">
-                  <Button
-                    className="bg-red-100 "
-                    size="sm"
-                    onClick={() => deleteOne(coupon._id)}
-                  >
-                    <Trash className="text-red-500" />
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+              {/* --- Card layout for < 1040px --- */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:hidden">
+                {displayCoupons.map((coupon) => (
+                  <Card key={coupon._id} className="p-4 space-y-2 border shadow-sm">
+                    <p className="text-sm font-medium">Category: {coupon?.productCategory}</p>
+                    <p className="text-sm">Code: {coupon.code}</p>
+                    <p className="text-sm">
+                      Discount:{" "}
+                      {coupon.type === "percentage"
+                        ? `${coupon.discountPercent}%`
+                        : `₹${coupon.discountAmount}`}
+                    </p>
+                    <p className="text-sm">Min Order: ₹{coupon.minOrderValue}</p>
+                    <p className="text-sm">Max Usage: {coupon.maxUsage}</p>
+                    <p className="text-sm">Starts: {coupon?.startsAt}</p>
+                    <p className="text-sm">Ends: {coupon?.expiresAt}</p>
+                    <div className="flex items-center justify-between pt-2">
+                      <Switch
+                        checked={coupon.active}
+                        onCheckedChange={() => toggleStatus(coupon._id)}
+                      />
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="hover:bg-red-50"
+                        onClick={() => deleteOne(coupon._id)}
+                      >
+                        <Trash className="h-4 w-4 text-red-500" />
+                      </Button>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
