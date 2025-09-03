@@ -3,7 +3,6 @@ import { resetState, selectCurrentRefreshToken, selectCurrentRole, selectCurrent
 
 const useAuth = () => {
   const token = useAppSelector(selectCurrentToken);
-
   const role = useAppSelector(selectCurrentRole);
   const refreshToken = useAppSelector(selectCurrentRefreshToken);
 

@@ -59,7 +59,7 @@ const CategoryList: React.FC = () => {
   return (
     <Card className="max-w-6xl mx-auto p-3 sm:p-6 border border-muted shadow-md">
       <h1 className="text-lg sm:text-2xl font-bold mb-4 sm:mb-6 text-center text-primary">
-        Categories Table View
+        Categories List
       </h1>
 
       {/* Responsive Table Wrapper */}

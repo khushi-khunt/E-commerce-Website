@@ -17,7 +17,7 @@ const ResetPassword = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const navigate = useNavigate()
-  const mutation = useResetPasswordMutation()
+  const mutation = useResetPassawordMutation()
   const dispatch = useAppDispatch();
 
   const { token } = useParams<{ token: string }>()

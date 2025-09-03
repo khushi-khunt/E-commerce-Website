@@ -39,7 +39,6 @@ const ChangePassword = () => {
         newPassword,
       });
       toast.success(result.message || "Password Changed Successfully..!");
-
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");

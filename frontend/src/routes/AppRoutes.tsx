@@ -1,61 +1,61 @@
-import { Route, Routes } from "react-router-dom"
+import { lazy, Suspense } from "react";
+import { Route, Routes } from "react-router-dom";
 //AUTH PAGES
-import AuthLayout from "@/layouts/AuthLayout"
-import Login from "@/pages/auth/Login"
-import Signup from "@/pages/auth/Signup"
-import ForgotPassword from "@/pages/auth/ForgotPassword"
-import ResetPassword from "@/pages/auth/ResetPassword"
+const AuthLayout = lazy(() => import("@/layouts/AuthLayout"));
+const Login = lazy(() => import("@/pages/auth/Login"));
+const Signup = lazy(() => import('@/pages/auth/Signup'));
+const ForgotPassword = lazy(() => import("@/pages/auth/ForgotPassword"));
+const ResetPassword = lazy(() => import("@/pages/auth/ResetPassword"));
 
 //OTHER PAGES
-import NotFound from "@/pages/Notfound"
-import ProtectedLayout from "@/layouts/ProtectedLayout"
-
+const ProtectedLayout = lazy(() => import("@/layouts/ProtectedLayout"));
+import Notfound from "@/pages/Notfound";
+import LoadingComponent from "@/components/LoadingComponent";
 //ADMIN PAGES
-import AdminLayout from "@/layouts/AdminLayout"
-import AdminDashboard from "@/pages/dashboard/admin/AdminDashboard"
-import ProductAdd from "@/pages/dashboard/admin/product/ProductAdd"
-import ProductList from "@/pages/dashboard/admin/product/ProductList"
-import ProductDetail from "@/pages/dashboard/admin/product/ProductDetail"
-import EditProduct from "@/pages/dashboard/admin/product/EditProduct"
-import AddCategory from "@/pages/dashboard/admin/categories/AddCategory"
-import CategoryList from "@/pages/dashboard/admin/categories/CategoryList"
-import EditCategory from "@/pages/dashboard/admin/categories/EditCategory"
-import OrderList from "@/pages/dashboard/admin/orders/OrderList"
-import OrderDetail from "@/pages/dashboard/admin/orders/OrderDetail"
-import AllUsers from "@/pages/dashboard/admin/users/AllUsers"
-import Faqs from "@/pages/dashboard/admin/settings/Faqs"
-import HelpCenter from "@/pages/dashboard/admin/settings/HelpCenter"
-import PrivacyPolicy from "@/pages/dashboard/admin/settings/PrivacyPolicy"
-import AddCoupon from "@/pages/dashboard/admin/coupons/AddCoupon"
-import CouponList from "@/pages/dashboard/admin/coupons/CouponList"
-import AllLocations from "@/pages/dashboard/admin/AllLocations"
-import UsersReport from "@/pages/dashboard/admin/UsersReport"
+const AdminLayout = lazy(() => import("@/layouts/AdminLayout"))
+const AdminDashboard = lazy(() => import("@/pages/dashboard/admin/AdminDashboard"))
+const ProductAdd = lazy(() => import("@/pages/dashboard/admin/product/ProductAdd"))
+const ProductList = lazy(() => import("@/pages/dashboard/admin/product/ProductList"))
+const ProductDetail = lazy(() => import("@/pages/dashboard/admin/product/ProductDetail"))
+const EditProduct = lazy(() => import("@/pages/dashboard/admin/product/EditProduct"))
+const AddCategory = lazy(() => import("@/pages/dashboard/admin/categories/AddCategory"))
+const CategoryList = lazy(() => import("@/pages/dashboard/admin/categories/CategoryList"))
+const EditCategory = lazy(() => import("@/pages/dashboard/admin/categories/EditCategory"))
+const OrderList = lazy(() => import("@/pages/dashboard/admin/orders/OrderList"))
+const OrderDetail = lazy(() => import("@/pages/dashboard/admin/orders/OrderDetail"))
+const AllUsers = lazy(() => import("@/pages/dashboard/admin/users/AllUsers"))
+const Faqs = lazy(() => import("@/pages/dashboard/admin/settings/Faqs"))
+const HelpCenter = lazy(() => import("@/pages/dashboard/admin/settings/HelpCenter"))
+const PrivacyPolicy = lazy(() => import("@/pages/dashboard/admin/settings/PrivacyPolicy"))
+const AddCoupon = lazy(() => import("@/pages/dashboard/admin/coupons/AddCoupon"))
+const CouponList = lazy(() => import("@/pages/dashboard/admin/coupons/CouponList"))
+const AllLocations = lazy(() => import("@/pages/dashboard/admin/AllLocations"))
+const UsersReport = lazy(() => import("@/pages/dashboard/admin/UsersReport"))
 
 //USER PAGES
-import UserLayout from "@/layouts/UserLayout"
-import UserDashboard from "@/pages/dashboard/user/UserDashboard"
-import SettingsLayout from "@/pages/dashboard/user/settings/SettingsLayout"
-import UserForgotPassword from "@/pages/dashboard/user/settings/UserForgotPassword"
-import ChangePassword from "@/pages/dashboard/user/settings/ChangePassword"
-import NewPassword from "@/pages/dashboard/user/settings/NewPassword"
-import DeleteAccount from "@/pages/dashboard/user/settings/DeleteAccount"
-import VerifyOtp from "@/pages/dashboard/user/settings/VerifyOtp"
-import CartPage from "@/pages/dashboard/user/settings/CartPage"
-import MyOrders from "@/pages/dashboard/user/settings/MyOrders"
-import CancelOrder from "@/pages/dashboard/user/settings/CancelOrder"
-import { CheckoutPage } from "@/pages/dashboard/user/settings/CheckoutPage"
-import { CheckoutSuccess } from "@/pages/dashboard/user/settings/CheckoutSuccess"
-import LocationPage from "@/pages/dashboard/user/settings/LocationPage"
-import PopularProducts from "@/pages/dashboard/user/products/PouplarProducts"
-import UserProductDetail from "@/pages/dashboard/user/products/UserProductDetail"
-import Wishlist from "@/pages/dashboard/user/settings/Wishlist"
-import Notfound from "@/pages/Notfound"
+const UserLayout = lazy(() => import("@/layouts/UserLayout"));
+const UserDashboard = lazy(() => import("@/pages/dashboard/user/UserDashboard"));
+const SettingsLayout = lazy(() => import("@/pages/dashboard/user/settings/SettingsLayout"));
+const UserForgotPassword = lazy(() => import("@/pages/dashboard/user/settings/UserForgotPassword"));
+const ChangePassword = lazy(() => import("@/pages/dashboard/user/settings/ChangePassword"));
+const NewPassword = lazy(() => import("@/pages/dashboard/user/settings/NewPassword"));
+const DeleteAccount = lazy(() => import("@/pages/dashboard/user/settings/DeleteAccount"));
+const VerifyOtp = lazy(() => import("@/pages/dashboard/user/settings/VerifyOtp"));
+const CartPage = lazy(() => import("@/pages/dashboard/user/settings/CartPage"));
+const MyOrders = lazy(() => import("@/pages/dashboard/user/settings/MyOrders"));
+const CancelOrder = lazy(() => import("@/pages/dashboard/user/settings/CancelOrder"));
+const CheckoutPage = lazy(() => import("@/pages/dashboard/user/settings/CheckoutPage"))
+const CheckoutSuccess = lazy(() => import("@/pages/dashboard/user/settings/CheckoutSuccess"))
+const PopularProducts = lazy(() => import("@/pages/dashboard/user/products/PouplarProducts"));
+const UserProductDetail = lazy(() => import("@/pages/dashboard/user/products/UserProductDetail"));
+const Wishlist = lazy(() => import("@/pages/dashboard/user/settings/Wishlist"));
+const LocationPage = lazy(() => import("@/pages/dashboard/user/settings/LocationPage"));
 
 const AppRoutes = () => {
     return (
         <Routes>
             {/* AUTH ROUTES */}
-            <Route element={<AuthLayout />}>
+            <Route element={<Suspense fallback={<LoadingComponent message="Please wait, loading Page..." />}><AuthLayout /></Suspense>}>
                 <Route path="/" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -63,19 +63,25 @@ const AppRoutes = () => {
             </Route>
 
             {/* ADMIN PROTECTED ROUTES */}
-            <Route element={<ProtectedLayout />}>
-                <Route element={<AdminLayout />}>
+            <Route element={<Suspense fallback={<LoadingComponent message="Please wait, loading Page..." />}><ProtectedLayout /></Suspense>}>
+                <Route element={<Suspense fallback={<LoadingComponent message="Please wait, loading Page..." />}><AdminLayout /></Suspense>}>
                     {/* ADMIN DASHBOARD */}
                     <Route path="/admin/dashboard" element={<AdminDashboard />} />
                     {/* PRODUCT*/}
                     <Route path="/admin/productadd" element={<ProductAdd />} />
                     <Route path="/admin/productlist" element={<ProductList />} />
                     <Route path="/admin/productlist/:_id" element={<ProductDetail />} />
-                    <Route path="/admin/productlist/:_id/edit" element={<EditProduct />} />
+                    <Route
+                        path="/admin/productlist/:_id/edit"
+                        element={<EditProduct />}
+                    />
                     {/* CATEGORY*/}
                     <Route path="/admin/categoryadd" element={<AddCategory />} />
                     <Route path="/admin/categorylist" element={<CategoryList />} />
-                    <Route path="/admin/categorylist/:_id/edit" element={<EditCategory />} />
+                    <Route
+                        path="/admin/categorylist/:_id/edit"
+                        element={<EditCategory />}
+                    />
                     {/* ORDER */}
                     <Route path="/admin/orderlist" element={<OrderList />} />
                     <Route path="/admin/orderlist/:id" element={<OrderDetail />} />
@@ -96,8 +102,8 @@ const AppRoutes = () => {
             </Route>
 
             {/* USER PROTECTED ROUTES */}
-            <Route element={<ProtectedLayout />}>
-                <Route element={<UserLayout />}>
+            <Route element={<Suspense fallback={<LoadingComponent message="Please wait, loading Page..." />}><ProtectedLayout /></Suspense>}>
+                <Route element={<Suspense fallback={<LoadingComponent message="Please wait, loading Page..." />}><UserLayout /></Suspense>}>
                     <Route path="/user/dashboard" element={<UserDashboard />} />
                     {/* Setting */}
                     <Route path="/user/settings" element={<SettingsLayout />} />
@@ -125,9 +131,9 @@ const AppRoutes = () => {
             <Route path="/notfound" element={<Notfound />} />
 
             {/* 404 PAGE */}
-            <Route path="*" element={<NotFound />} />
+            <Route path="*" element={<Notfound />} />
         </Routes>
-    )
-}
+    );
+};
 
-export default AppRoutes
+export default AppRoutes;

@@ -14,12 +14,12 @@ export const SalesChart = () => {
 
   const saleByDate = statsQuery.data?.saleByDate || [];
 
-  // 🔁 Generate last 7 days
+  // 🔁 Generate last 7 days (oldest → newest)
   const last7Days = Array.from({ length: 7 }).map((_, i) =>
     dayjs().subtract(6 - i, "day").format("YYYY-MM-DD")
   );
 
-  //  Initialize data structure
+  // Initialize data structure
   const orderCounts: Record<string, number> = {};
   const salesTotals: Record<string, number> = {};
   last7Days.forEach((date) => {
@@ -27,35 +27,41 @@ export const SalesChart = () => {
     salesTotals[date] = 0;
   });
 
-  //  Fill from saleByDate
+  // Fill from saleByDate
   saleByDate.forEach((entry: any) => {
     const date = dayjs(entry._id).format("YYYY-MM-DD");
     if (orderCounts[date] !== undefined) {
-      orderCounts[date] = entry.count;
-      salesTotals[date] = entry.totalSums;
+      orderCounts[date] = entry.count || 0;
+      salesTotals[date] = entry.totalSums || 0;
     }
   });
 
-  // Labels
+  // Labels for X-axis
   const labels = last7Days.map((d) => dayjs(d).format("MMM D"));
 
-  //  Chart series
+  // Chart series with proper Y-axis index
   const series = [
     {
       name: "Orders",
       data: last7Days.map((d) => orderCounts[d] || 0),
+      yAxisIndex: 0,
     },
     {
       name: "Sales",
       data: last7Days.map((d) => salesTotals[d] || 0),
+      yAxisIndex: 1,
     },
   ];
 
+  // Chart options
   const options = {
-    chart: { type: "line" },
+    chart: {
+      type: "line",
+      toolbar: { show: true },
+    },
     xaxis: { categories: labels },
     colors: ["#3b82f6", "#f59e0b"],
-    stroke: { curve: "smooth" },
+    stroke: { curve: "smooth", width: 5 },
     legend: { position: "top" },
     yaxis: [
       { title: { text: "Orders" } },
@@ -66,7 +72,7 @@ export const SalesChart = () => {
         formatter: (val: number) => val.toLocaleString(),
       },
     },
-
+    markers: { size: 5 },
   };
 
   return (

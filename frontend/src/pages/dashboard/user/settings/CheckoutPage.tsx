@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { useEffect } from "react";
 import { checkoutOrder } from "@/services/productService";
 
-export const CheckoutPage = () => {
+export default function CheckoutPage() {
     const { state } = useLocation();
     const { cartItems, userId, location } = state || {};
 
